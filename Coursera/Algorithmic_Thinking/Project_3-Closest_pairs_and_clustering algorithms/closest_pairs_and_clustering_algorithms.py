@@ -157,12 +157,18 @@ def hierarchical_clustering(cluster_list, num_clusters):
     Output: List of clusters whose length is num_clusters
     """
 
-    return []
+    num = len(cluster_list)
+    while num > num_clusters:
+        cluster_list.sort(key = lambda clu: clu.horiz_center())
+        idx = fast_closest_pair(cluster_list)
+        cluster_list[idx[1]].merge_clusters(cluster_list[idx[2]])
+        cluster_list.pop(idx[2])
+        num -= 1
+    return cluster_list
 
 
 ######################################################################
 # Code for k-means clustering
-
 
 def kmeans_clustering(cluster_list, num_clusters, num_iterations):
     """
@@ -174,38 +180,57 @@ def kmeans_clustering(cluster_list, num_clusters, num_iterations):
     """
 
     # position initial clusters at the location of clusters with largest populations
+    num = len(cluster_list)
 
-    return []
+    points = [idx for idx in xrange(num)]
+    points.sort(reverse = True, key = lambda idx:
+                cluster_list[idx].total_population())
+    points = [[cluster_list[points[idx]].horiz_center(),
+               cluster_list[points[idx]].vert_center()]
+              for idx in xrange(num_clusters)]
+    clusters = [-1 for _ in xrange(num)]
+    population = [0 for _ in xrange(num_clusters)]
+    for _ in xrange(num_iterations):
+        for cidx in xrange(num):
+            mind = (float("inf"), -1, -1)
+            for idx in xrange(num_clusters):
+                dist = cluster_point_distance(cluster_list,
+                                              points,
+                                              cidx, idx)
+                if mind > dist:
+                    mind = dist
+            clusters[cidx] = mind[2]
+        for idx in xrange(num_clusters):
+            points[idx][0] = 0.0
+            points[idx][1] = 0.0
+            population[idx] = 0
+        for cidx in xrange(num):
+            idx = clusters[cidx]
+            cpopul = cluster_list[cidx].total_population()
+            population[idx] += cpopul
+            points[idx][0] += cluster_list[cidx].horiz_center() * cpopul
+            points[idx][1] += cluster_list[cidx].vert_center()  * cpopul
+        for idx in xrange(num_clusters):
+            points[idx][0] /= population[idx]
+            points[idx][1] /= population[idx]
+    result = [0 for _ in xrange(num_clusters)]
+    for cidx in xrange(num):
+        idx = clusters[cidx]
+        if result[idx] == 0:
+            result[idx] = cluster_list[cidx].copy()
+        else:
+            result[idx].merge_clusters(cluster_list[cidx])
+    return result
 
-# As one important coding note, you will need to sort a list of clusters by the horizontal
-# (as well as vertical) positions of the cluster centers. This operation can be done in a single line
-# of Python using the sort method for lists by providing a key argument of the form:
-# cluster_list.sort(key = lambda cluster: cluster.horiz_center())
+def cluster_point_distance(cluster_list, points, cidx, idx):
+    """
+    Helper function that computes Euclidean distance between cluster and point
+    Input: cluster_list is list of clusters, points is list of points,
+    cidx1 and idx are integer indices for cluster and point
 
-print closest_pair_strip([
-    alg_cluster.Cluster(set([]), 0, 0, 1, 0),
-    alg_cluster.Cluster(set([]), 1, 0, 1, 0),
-    alg_cluster.Cluster(set([]), 2, 0, 1, 0),
-    alg_cluster.Cluster(set([]), 3, 0, 1, 0)
-    ], 1.5, 1.0)
-
-print closest_pair_strip([
-    alg_cluster.Cluster(set([]), 0, 0, 1, 0),
-    alg_cluster.Cluster(set([]), 0, 1, 1, 0),
-    alg_cluster.Cluster(set([]), 0, 2, 1, 0),
-    alg_cluster.Cluster(set([]), 0, 3, 1, 0)
-    ],0.0, 1.0)
-
-print fast_closest_pair([
-    alg_cluster.Cluster(set([]), 0, 0, 1, 0),
-    alg_cluster.Cluster(set([]), 1, 0, 1, 0),
-    alg_cluster.Cluster(set([]), 2, 0, 1, 0),
-    alg_cluster.Cluster(set([]), 3, 0, 1, 0)
-    ])
-
-print fast_closest_pair([
-    alg_cluster.Cluster(set([]), 1.0, 0.0, 1, 0),
-    alg_cluster.Cluster(set([]), 4.0, 0.0, 1, 0),
-    alg_cluster.Cluster(set([]), 5.0, 0.0, 1, 0),
-    alg_cluster.Cluster(set([]), 7.0, 0.0, 1, 0)
-    ])
+    Output: tuple (dist, cidx, idx) where dist is distance between
+    cluster_list[cidx] and points[idx]
+    """
+    d_x = cluster_list[cidx].horiz_center() - points[idx][0]
+    d_y = cluster_list[cidx].vert_center()  - points[idx][1]
+    return (math.sqrt(d_x ** 2 + d_y ** 2), cidx, idx)
