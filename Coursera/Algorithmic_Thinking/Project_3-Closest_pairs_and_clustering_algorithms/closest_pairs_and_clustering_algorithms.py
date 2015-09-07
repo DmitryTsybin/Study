@@ -134,7 +134,7 @@ def fast_closest_pair(cluster_list):
         # merge
         left_and_right_min_tuple = return_min_tuple(left_tuple, right_tuple)
 
-        print 'cluster_list[split]: ', cluster_list[split]
+        # print 'cluster_list[split]: ', cluster_list[split]
 
         middle = 0.5 * (cluster_list[split - 1].horiz_center() + cluster_list[split].horiz_center())
         ret_tuple = return_min_tuple(
@@ -182,6 +182,8 @@ def kmeans_clustering(cluster_list, num_clusters, num_iterations):
     # position initial clusters at the location of clusters with largest populations
     num = len(cluster_list)
 
+    print "num_clusters: ", num_clusters
+
     points = [idx for idx in xrange(num)]
     points.sort(reverse = True, key = lambda idx:
                 cluster_list[idx].total_population())
@@ -211,8 +213,9 @@ def kmeans_clustering(cluster_list, num_clusters, num_iterations):
             points[idx][0] += cluster_list[cidx].horiz_center() * cpopul
             points[idx][1] += cluster_list[cidx].vert_center()  * cpopul
         for idx in xrange(num_clusters):
-            points[idx][0] /= population[idx]
-            points[idx][1] /= population[idx]
+            if population[idx] != 0:
+                points[idx][0] /= population[idx]
+                points[idx][1] /= population[idx]
     result = [0 for _ in xrange(num_clusters)]
     for cidx in xrange(num):
         idx = clusters[cidx]
@@ -234,3 +237,17 @@ def cluster_point_distance(cluster_list, points, cidx, idx):
     d_x = cluster_list[cidx].horiz_center() - points[idx][0]
     d_y = cluster_list[cidx].vert_center()  - points[idx][1]
     return (math.sqrt(d_x ** 2 + d_y ** 2), cidx, idx)
+
+
+def compute_distortion(cluster_list, data_table):
+    distortion = 0
+    for cluster in cluster_list:
+        if type(cluster) == 'instance' and cluster != 0:
+            distortion += cluster.cluster_error(data_table)
+    return distortion
+
+
+
+
+
+

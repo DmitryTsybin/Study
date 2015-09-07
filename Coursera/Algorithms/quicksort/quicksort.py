@@ -16,16 +16,15 @@ def partition_first(array, leftend, rightend):
     leftendval = array[leftend]
     array[leftend] = array[i-1]
     array[i-1] = leftendval
-    return i - 1 
+    return i - 1
 
 #A method for partitioning around the last element of the array
 def partition_last(array, leftend, rightend):
-    
     pivot = array[rightend-1]
 
     array[rightend-1] = array[leftend]
     array[leftend] = pivot
-    
+
     i = leftend + 1
     for j in range(leftend + 1, rightend):
         if array[j] < pivot:
@@ -37,7 +36,7 @@ def partition_last(array, leftend, rightend):
     leftendval = array[leftend]
     array[leftend] = array[i-1]
     array[i-1] = leftendval
-    return i - 1 
+    return i - 1
 
 #A method to calculate the median of three numbers using two comparisons
 def median(a, b, c):
@@ -59,8 +58,6 @@ def partition_median(array, leftend, rightend):
         middle = array[leftend + length/2 - 1]
     else:
         middle = array[leftend + length/2]
-  
-    
 
     pivot = median(left, right, middle)
 
@@ -80,22 +77,22 @@ def partition_median(array, leftend, rightend):
     leftendval = array[leftend]
     array[leftend] = array[i-1]
     array[i-1] = leftendval
-    return i - 1 
+    return i - 1
 
-    
+
 #Implement quicksort while partitioning around the first index
 def quick_sort1(array, leftindex, rightindex):
     global firstcomparison
     if leftindex < rightindex:
-        
+
         newpivotindex = partition_first(array, leftindex, rightindex)
-        
+
         firstcomparison += (rightindex - leftindex - 1)
-        
-        quick_sort1(array, leftindex, newpivotindex) 
-        
+
+        quick_sort1(array, leftindex, newpivotindex)
+
         quick_sort1(array, newpivotindex + 1, rightindex)
-        
+
 def quicksort_last(array, leftindex, rightindex):
     global lastcomparison
     if leftindex < rightindex:
@@ -107,7 +104,7 @@ def quicksort_last(array, leftindex, rightindex):
         quicksort_last(array, leftindex, newpivotindex)
         quicksort_last(array, newpivotindex + 1, rightindex)
 
- 
+
 def quicksort_median(array, leftindex, rightindex):
      global mediancomparison
      if leftindex < rightindex:
@@ -116,7 +113,7 @@ def quicksort_median(array, leftindex, rightindex):
 
          mediancomparison += (rightindex - leftindex - 1)
          quicksort_median(array, leftindex, newpivotindex)
-         
+
 
          quicksort_median(array, newpivotindex + 1, rightindex)
 
@@ -126,7 +123,7 @@ test4 = []
 for i in range(1, 101):
     test4.append(i)
 
-f = open("IntegerArray.txt", "r")
+f = open("QuickSort.txt", "r")
 intarray = []
 for line in f:
     intarray.append(int(line))
