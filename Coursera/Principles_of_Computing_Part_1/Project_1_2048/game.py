@@ -2,9 +2,18 @@
 Clone of 2048 game.
 """
 
-import poc_2048_gui
+import os
+import sys
+
+tmp = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+print(tmp)
+print(__file__)
+sys.path.append(tmp)
+
+#import poc_2048_gui
 import random
-#from ..Project_1_merge_2048 import merge
+from Project_1_merge_2048.merge import merge
+
 
 # Directions, DO NOT MODIFY
 UP = 1
@@ -19,6 +28,8 @@ OFFSETS = {UP: (1, 0),
            LEFT: (0, 1),
            RIGHT: (0, -1)}
 
+
+'''
 def merge(line):
     """
     Function that merges a single row or column in 2048.
@@ -48,6 +59,7 @@ def tight(line):
         line[iter_i + 1] = 0
       iter_i -= 1
   return line
+'''
 
 
 class TwentyFortyEight:
@@ -246,4 +258,4 @@ class TwentyFortyEight:
 # 0 0 0 0
 # 0 0 0 0
 
-poc_2048_gui.run_gui(TwentyFortyEight(4, 4))
+#poc_2048_gui.run_gui(TwentyFortyEight(4, 4))
