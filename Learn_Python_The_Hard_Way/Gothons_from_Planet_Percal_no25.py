@@ -98,7 +98,6 @@ class LaserWeaponArmory(Scene):
         print "wrong 10 times then the lock closes forever and you can't"
         print "get the bomb.  The code is 3 digits."
         code = "%d%d%d" % (randint(1,9), randint(1,9), randint(1,9))
-        guess = raw_input("[keypad]> ")
         guesses = 0
 
         while guess != code and guesses < 10:
