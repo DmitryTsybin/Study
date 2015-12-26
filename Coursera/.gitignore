@@ -60,3 +60,9 @@ target/
 # MacOS
 .DS_Store
 
+# PyCharm
+*.idea*
+
+# SQLite
+*.sqlite
+*.db
